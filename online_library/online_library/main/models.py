@@ -7,6 +7,10 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=30)
     image_url = models.URLField()
 
+    @property
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
 
 class Book(models.Model):
 

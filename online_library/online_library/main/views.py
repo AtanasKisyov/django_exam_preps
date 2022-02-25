@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from online_library.main.forms import CreateProfile, CreateBook, EditBook, DeleteBook
+from online_library.main.forms import CreateProfile, CreateBook, EditBook, DeleteBook, EditProfile, DeleteProfile
 from online_library.main.helpers import get_user_profile, get_user_books
 from online_library.main.models import Book
 
@@ -63,12 +63,32 @@ def delete_book(request, pk):
 
 
 def profile(request):
-    return render(request, 'profile.html')
+    user_profile = get_user_profile()
+    context = {'user_profile': user_profile}
+    return render(request, 'profile.html', context)
 
 
 def edit_profile(request):
-    return render(request, 'edit-profile.html')
+    user_profile = get_user_profile()
+    if request.method == 'POST':
+        form = EditProfile(request.POST, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = EditProfile(instance=user_profile)
+    context = {'form': form}
+    return render(request, 'edit-profile.html', context)
 
 
 def delete_profile(request):
-    return render(request, 'delete-profile.html')
+    user_profile = get_user_profile()
+    if request.method == 'POST':
+        form = DeleteProfile(request.POST, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = DeleteProfile(instance=user_profile)
+    context = {'form': form}
+    return render(request, 'delete-profile.html', context)
